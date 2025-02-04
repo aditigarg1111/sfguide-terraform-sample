@@ -1,3 +1,17 @@
+resource "snowflake_account_role" "BUILD_FR" {
+  name    = format("%s_%s", var.environment, "BUILD_FR")
+  comment = "Role for Development"
+}
+
+#grant ownership to USERADMIN
+resource "snowflake_grant_ownership" "BUILD_FR_OWNERSHIP_GRANT" {
+  account_role_name = "USERADMIN"
+  on {
+    object_type = "ROLE"
+    object_name = snowflake_account_role.BUILD_FR.name
+  }
+}
+
 resource "snowflake_account_role" "ACO_OPS_FR" {
   name    = format("%s_%s", var.environment, "ACO_OPS_FR")
   comment = "Role for ACO Operations department"

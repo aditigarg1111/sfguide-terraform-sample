@@ -14,7 +14,7 @@ resource "snowflake_grant_ownership" "CURATED_DB_OWNERSHIP_GRANT" {
   }
 }
 
-output "curated_db" {
+output "database" {
   value = snowflake_database.CURATED_DB.name
 }
 

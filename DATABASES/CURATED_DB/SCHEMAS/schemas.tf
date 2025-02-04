@@ -110,11 +110,13 @@ resource "snowflake_grant_ownership" "CURATED_DB_ACTUARIAL_OWNERSHIP_GRANT" {
   }
 }
 
+/*
 resource "snowflake_schema" "PUBLIC" {
   # provider = snowflake.env_sysadmin
   name     = "PUBLIC"
   database = var.database
 }
+*/
 
 #grant ownership to SYSADMIN
 resource "snowflake_grant_ownership" "CURATED_DB_PUBLIC_OWNERSHIP_GRANT" {
@@ -122,7 +124,7 @@ resource "snowflake_grant_ownership" "CURATED_DB_PUBLIC_OWNERSHIP_GRANT" {
   outbound_privileges = "COPY"
   on {
     object_type = "SCHEMA"
-    object_name = format("%s.%s", var.database, snowflake_schema.PUBLIC.name)
+    object_name = format("%s.%s", var.database, "PUBLIC")
   }
 }
 
@@ -220,4 +222,44 @@ resource "snowflake_grant_ownership" "CURATED_DB_FINANCIAL_PERFORMANCE__AGG_OWNE
     object_type = "SCHEMA"
     object_name = format("%s.%s", var.database, snowflake_schema.FINANCIAL_PERFORMANCE__AGG.name)
   }
+}
+
+output "FINANCIAL_PERFORMANCE__AGG" {
+  value = snowflake_schema.FINANCIAL_PERFORMANCE__AGG.name
+}
+output "FINANCIAL_PERFORMANCE__PATIENT" {
+  value = snowflake_schema.FINANCIAL_PERFORMANCE__PATIENT.name
+}
+output "DSA_FEATURE_STORE_PATIENT" {
+  value = snowflake_schema.DSA_FEATURE_STORE_PATIENT.name
+}
+output "DS_PAYMENT_MODELING" {
+  value = snowflake_schema.DS_PAYMENT_MODELING.name
+}
+output "DS_PERFORMANCE" {
+  value = snowflake_schema.DS_PERFORMANCE.name
+}
+output "CUSTOMER_SUCCESS" {
+  value = snowflake_schema.CUSTOMER_SUCCESS.name
+}
+output "ACTUARIAL" {
+  value = snowflake_schema.ACTUARIAL.name
+}
+output "CLAIMS__AGG" {
+  value = snowflake_schema.CLAIMS__AGG.name
+}
+output "CLAIMS__PATIENT" {
+  value = snowflake_schema.CLAIMS__PATIENT.name
+}
+output "PEARL_ALIGNMENT__AGG" {
+  value = snowflake_schema.PEARL_ALIGNMENT__AGG.name
+}
+output "PEARL_ALIGNMENT__PATIENT" {
+  value = snowflake_schema.PEARL_ALIGNMENT__PATIENT.name
+}
+output "PEARL_PRODUCT__AGG" {
+  value = snowflake_schema.PEARL_PRODUCT__AGG.name
+}
+output "PEARL_PRODUCT__PATIENT" {
+  value = snowflake_schema.PEARL_PRODUCT__PATIENT.name
 }

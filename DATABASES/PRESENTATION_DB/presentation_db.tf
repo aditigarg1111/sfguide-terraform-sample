@@ -14,7 +14,7 @@ resource "snowflake_grant_ownership" "PRESENTATION_DB_OWNERSHIP_GRANT" {
   }
 }
 
-output "presentation_db" {
+output "database" {
   value = snowflake_database.PRESENTATION_DB.name
 }
 

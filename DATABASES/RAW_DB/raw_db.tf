@@ -14,7 +14,7 @@ resource "snowflake_grant_ownership" "RAW_DB_OWNERSHIP_GRANT" {
   }
 }
 
-output "raw_db" {
+output "database" {
   value = snowflake_database.RAW_DB.name
 }
 

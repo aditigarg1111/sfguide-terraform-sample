@@ -14,7 +14,7 @@ resource "snowflake_grant_ownership" "DATA_SCIENCE_DB_OWNERSHIP_GRANT" {
   }
 }
 
-output "data_science_db" {
+output "database" {
   value = snowflake_database.DATA_SCIENCE_DB.name
 }
 
