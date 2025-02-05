@@ -24,6 +24,12 @@ module "curated_schemas" {
   database     = module.curated_db.database
 }
 
+module "raw_schemas" {
+  source       = "./DATABASES/RAW_DB/SCHEMAS"
+  environment  = var.environment
+  database     = module.raw_db.database
+}
+
 module "roles" {
   source       = "./ROLES"
   environment  = var.environment

@@ -1,3 +1,31 @@
+resource "snowflake_account_role" "RAW_RW_AR" {
+  name    = format("%s_%s", var.environment, "RAW_RW_AR")
+  comment = "read and write access role for raw fr"
+}
+
+#grant ownership to USERADMIN
+resource "snowflake_grant_ownership" "RAW_RW_AR_OWNERSHIP_GRANT" {
+  account_role_name = "USERADMIN"
+  on {
+    object_type = "ROLE"
+    object_name = snowflake_account_role.RAW_RW_AR.name
+  }
+}
+
+resource "snowflake_account_role" "RAW_RO_AR" {
+  name    = format("%s_%s", var.environment, "RAW_RO_AR")
+  comment = "read and write access role for raw fr"
+}
+
+#grant ownership to USERADMIN
+resource "snowflake_grant_ownership" "RAW_RO_AR_OWNERSHIP_GRANT" {
+  account_role_name = "USERADMIN"
+  on {
+    object_type = "ROLE"
+    object_name = snowflake_account_role.RAW_RO_AR.name
+  }
+}
+
 resource "snowflake_account_role" "PEARL_PRODUCT__PATIENT_RW_AR" {
   name    = format("%s_%s", var.environment, "PEARL_PRODUCT__PATIENT_RW_AR")
   comment = "read and write access role for pearl_product__patient"

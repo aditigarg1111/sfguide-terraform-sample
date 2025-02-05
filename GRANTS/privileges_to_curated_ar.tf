@@ -16,7 +16,8 @@ locals {
     "${var.FINANCIAL_PERFORMANCE__AGG}"
   ]
 
-  object_types = [
+  # Plural object types for future grants
+  object_types_plural = [
     "EXTERNAL TABLES",
     "TABLES",
     "VIEWS",
@@ -32,6 +33,22 @@ locals {
     "EVENT TABLES",
     "ALERTS",
     "PIPES"
+  ]
+
+  # Singular object types for existing grants
+  object_types_singular = [
+    "TABLE",
+    "VIEW",
+    "MATERIALIZED VIEW",
+    "STAGE",
+    "FILE FORMAT",
+    "SEQUENCE",
+    "TASK",
+    "STREAM",
+    "DYNAMIC TABLE",
+    "EVENT TABLE",
+    "ALERT",
+    "PIPE"
   ]
 }
 
@@ -73,11 +90,23 @@ resource "snowflake_grant_privileges_to_account_role" "FUTURE_USAGE_SCHEMA_TO_SC
   }
 }
 
-# Create a list of schema-object_type pairs
+# Create a list of schema-object_type pairs for future grants
 locals {
-  schema_object_pairs = flatten([
+  schema_object_pairs_future = flatten([
     for schema in local.schemas : [
-      for object_type in local.object_types : {
+      for object_type in local.object_types_plural : {
+        schema      = schema
+        object_type = object_type
+      }
+    ]
+  ])
+}
+
+# Create a list of schema-object_type pairs for existing grants
+locals {
+  schema_object_pairs_existing = flatten([
+    for schema in local.schemas : [
+      for object_type in local.object_types_singular : {
         schema      = schema
         object_type = object_type
       }
@@ -87,7 +116,7 @@ locals {
 
 # FUTURE GRANTS ON OBJECTS
 resource "snowflake_grant_privileges_to_account_role" "ALL_FUTURE_OBJECTS_TO_SCHEMAS_RW_AR" {
-  for_each = { for pair in local.schema_object_pairs : "${pair.schema}_${pair.object_type}" => pair }
+  for_each = { for pair in local.schema_object_pairs_future : "${pair.schema}_${pair.object_type}" => pair }
 
   all_privileges    = true
   account_role_name = "${var.environment}_${each.value.schema}_RW_AR"
@@ -97,6 +126,19 @@ resource "snowflake_grant_privileges_to_account_role" "ALL_FUTURE_OBJECTS_TO_SCH
       object_type_plural = each.value.object_type
       in_schema          = "${var.curated_db}.${each.value.schema}"  # Fully qualified schema name
     }
+  }
+}
+
+# GRANT PRIVILEGES ON EXISTING OBJECTS
+resource "snowflake_grant_privileges_to_account_role" "ALL_EXISTING_OBJECTS_TO_SCHEMAS_RW_AR" {
+  for_each = { for pair in local.schema_object_pairs_existing : "${pair.schema}_${pair.object_type}" => pair }
+
+  all_privileges    = true  # Set all privileges to true
+  account_role_name = "${var.environment}_${each.value.schema}_RW_AR"
+
+  on_schema_object {
+    object_type = each.value.object_type
+    object_name = "${var.curated_db}.${each.value.schema}.*"  # Fully qualified schema name with wildcard for all objects
   }
 }
 
@@ -161,7 +203,7 @@ locals {
 
 # FUTURE GRANTS ON OBJECTS FOR RO ROLES
 resource "snowflake_grant_privileges_to_account_role" "FUTURE_OBJECTS_TO_SCHEMAS_RO_AR" {
-  for_each = { for pair in local.schema_object_pairs : "${pair.schema}_${pair.object_type}" => pair }
+  for_each = { for pair in local.schema_object_pairs_future : "${pair.schema}_${pair.object_type}" => pair }
 
   privileges        = lookup(local.ro_privileges, each.value.object_type, [])  # Lookup privileges for the object type
   account_role_name = "${var.environment}_${each.value.schema}_RO_AR"  # RO role name format <SCHEMA>_RO_AR

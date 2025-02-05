@@ -12,6 +12,20 @@ resource "snowflake_grant_ownership" "BUILD_FR_OWNERSHIP_GRANT" {
   }
 }
 
+resource "snowflake_account_role" "RAW_FR" {
+  name    = format("%s_%s", var.environment, "RAW_FR")
+  comment = "Role for Development"
+}
+
+#grant ownership to USERADMIN
+resource "snowflake_grant_ownership" "RAW_FR_OWNERSHIP_GRANT" {
+  account_role_name = "USERADMIN"
+  on {
+    object_type = "ROLE"
+    object_name = snowflake_account_role.RAW_FR.name
+  }
+}
+
 resource "snowflake_account_role" "ACO_OPS_FR" {
   name    = format("%s_%s", var.environment, "ACO_OPS_FR")
   comment = "Role for ACO Operations department"

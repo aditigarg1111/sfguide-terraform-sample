@@ -4,6 +4,12 @@ resource "snowflake_grant_account_role" "BUILD_FR_GRANT" {
   parent_role_name = "SYSADMIN"
 }
 
+#grant RAW_FR to BUILD_FR
+resource "snowflake_grant_account_role" "RAW_FR_GRANT" {
+  role_name        = format("%s_%s", var.environment, "RAW_FR")
+  parent_role_name = format("%s_%s", var.environment, "BUILD_FR")
+}
+
 #grant ACO_OPS_FR to BUILD_FR
 resource "snowflake_grant_account_role" "ACO_OPS_FR_GRANT" {
   role_name        = format("%s_%s", var.environment, "ACO_OPS_FR")
@@ -98,6 +104,18 @@ resource "snowflake_grant_account_role" "CORPORATE_FR_GRANT" {
 resource "snowflake_grant_account_role" "SERVICE_ACCOUNT_FR_GRANT" {
   role_name        = format("%s_%s", var.environment, "SERVICE_ACCOUNT_FR")
   parent_role_name = format("%s_%s", var.environment, "BUILD_FR")
+}
+
+#grant RAW_RW_AR to RAW_FR
+resource "snowflake_grant_account_role" "RAW_FR_GRANT_RAW_RW_AR" {
+  role_name        = format("%s_%s", var.environment, "RAW_RW_AR")
+  parent_role_name = format("%s_%s", var.environment, "RAW_FR")
+}
+
+#grant RAW_RO_AR to RAW_FR
+resource "snowflake_grant_account_role" "RAW_FR_GRANT_RAW_RO_AR" {
+  role_name        = format("%s_%s", var.environment, "RAW_RO_AR")
+  parent_role_name = format("%s_%s", var.environment, "RAW_FR")
 }
 
 # PEARL_PRODUCT__PATIENT_RW_AR
