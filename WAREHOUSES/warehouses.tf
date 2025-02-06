@@ -12,6 +12,21 @@ resource "snowflake_grant_ownership" "BUILD_WH_OWNERSHIP_GRANT" {
   }
 }
 
+resource "snowflake_warehouse" "RAW_WH" {
+  name           = format("%s_%s", var.environment, "RAW_WH")
+  comment        = "Warehouse dedicated to RAW layer ingestion"
+  warehouse_size = "XSMALL"
+}
+
+#grant ownership to SYSADMIN
+resource "snowflake_grant_ownership" "RAW_WH_OWNERSHIP_GRANT" {
+  account_role_name = "SYSADMIN"
+  on {
+    object_type = "WAREHOUSE"
+    object_name = snowflake_warehouse.RAW_WH.name
+  }
+}
+
 resource "snowflake_warehouse" "ACO_OPS_WH" {
   name           = format("%s_%s", var.environment, "ACO_OPS_WH")
   comment        = "Warehouse dedicated to ACO Operations department workload"

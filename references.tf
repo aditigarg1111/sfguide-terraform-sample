@@ -30,19 +30,48 @@ module "raw_schemas" {
   database     = module.raw_db.database
 }
 
+module "data_science_schemas" {
+  source       = "./DATABASES/DATA_SCIENCE_DB/SCHEMAS"
+  environment  = var.environment
+  database     = module.data_science_db.database
+}
+
+module "presentation_schemas" {
+  source       = "./DATABASES/PRESENTATION_DB/SCHEMAS"
+  environment  = var.environment
+  database     = module.presentation_db.database
+}
+
 module "roles" {
   source       = "./ROLES"
   environment  = var.environment
 }
 
+module "warehouses" {
+  source      = "./WAREHOUSES"
+  environment = var.environment
+}
+
 module "grants"{
     source = "./GRANTS"
-    depends_on = [module.roles]
+    depends_on = [
+      module.warehouses,
+      module.roles,
+      module.raw_db,
+      module.curated_db,
+      module.data_science_db,
+      module.presentation_db,
+      module.curated_schemas,
+      module.raw_schemas,
+      module.presentation_schemas,
+      module.data_science_schemas
+    ]
     environment                    = var.environment
     raw_db                         = module.raw_db.database
     curated_db                     = module.curated_db.database
     data_science_db                = module.data_science_db.database
     presentation_db                = module.presentation_db.database
+    #schema names for curated_db
     PEARL_PRODUCT__PATIENT         = module.curated_schemas.PEARL_PRODUCT__PATIENT
     PEARL_PRODUCT__AGG             = module.curated_schemas.PEARL_PRODUCT__AGG
     PEARL_ALIGNMENT__PATIENT       = module.curated_schemas.PEARL_ALIGNMENT__PATIENT

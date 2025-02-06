@@ -8,6 +8,16 @@ resource "snowflake_grant_privileges_to_account_role" "USAGE_BUILD_WH_TO_BUILD_F
   }
 }
 
+# Grant USAGE privilege on RAW_WH to RAW_FR
+resource "snowflake_grant_privileges_to_account_role" "USAGE_RAW_WH_TO_RAW_FR" {
+  account_role_name = format("%s_%s", var.environment, "RAW_FR")
+  privileges        = ["USAGE"]
+  on_account_object {
+    object_type = "WAREHOUSE"
+    object_name = format("%s_%s", var.environment, "RAW_WH")
+  }
+}
+
 # Grant USAGE privilege on ACO_OPS_WH to ACO_OPS_FR
 resource "snowflake_grant_privileges_to_account_role" "USAGE_ACO_OPS_WH_TO_ACO_OPS_FR" {
   account_role_name = format("%s_%s", var.environment, "ACO_OPS_FR")

@@ -1,5 +1,5 @@
 #grant ownership to SYSADMIN
-resource "snowflake_grant_ownership" "RAW_DB_PUBLIC_OWNERSHIP_GRANT" {
+resource "snowflake_grant_ownership" "PRESENTATION_DB_PUBLIC_OWNERSHIP_GRANT" {
   account_role_name   = "SYSADMIN"
   outbound_privileges = "COPY"
   on {
