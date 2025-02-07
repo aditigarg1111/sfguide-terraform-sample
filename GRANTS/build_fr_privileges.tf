@@ -22,3 +22,14 @@ resource "snowflake_grant_privileges_to_account_role" "CREATE_SCHEMA_ON_DATABASE
     object_name = "${each.value}"  # Database name (RAW_DB, CURATED_DB, etc.)
   }
 }
+
+# grant imported privilge to BUILD_FR
+resource "snowflake_grant_privileges_to_account_role" "IMPORTED_PRIVILEGES_ON_SHARED_DATABASE_TO_BUILD_FR" {
+  account_role_name = "${var.environment}_BUILD_FR"  # Role name
+  privileges        = ["IMPORTED PRIVILEGES"]
+
+  on_account_object {
+    object_type = "DATABASE"
+    object_name = "WORLDWIDE_ADDRESS_DATA"  # Replace with the name of your shared database todo:
+  }
+}

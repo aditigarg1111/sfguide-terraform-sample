@@ -37,6 +37,7 @@ locals {
 
   # Singular object types for existing grants
   object_types_singular = [
+    "EXTERNAL TABLE",
     "TABLE",
     "VIEW",
     "MATERIALIZED VIEW",
@@ -52,6 +53,29 @@ locals {
   ]
 }
 
+# Create a list of schema-object_type pairs for future grants
+locals {
+  schema_object_pairs_future = flatten([
+    for schema in local.schemas : [
+      for object_type in local.object_types_plural : {
+        schema      = schema
+        object_type = object_type
+      }
+    ]
+  ])
+}
+
+# Create a list of schema-object_type pairs for existing grants
+locals {
+  schema_object_pairs_existing = flatten([
+    for schema in local.schemas : [
+      for object_type in local.object_types_singular : {
+        schema      = schema
+        object_type = object_type
+      }
+    ]
+  ])
+}
 
 # Grant USAGE privilege on the DATABASE 
 resource "snowflake_grant_privileges_to_account_role" "USAGE_DATABASE_TO_SCHEMA_ROLES_RW" {
@@ -90,29 +114,6 @@ resource "snowflake_grant_privileges_to_account_role" "FUTURE_USAGE_SCHEMA_TO_SC
   }
 }
 
-# Create a list of schema-object_type pairs for future grants
-locals {
-  schema_object_pairs_future = flatten([
-    for schema in local.schemas : [
-      for object_type in local.object_types_plural : {
-        schema      = schema
-        object_type = object_type
-      }
-    ]
-  ])
-}
-
-# Create a list of schema-object_type pairs for existing grants
-locals {
-  schema_object_pairs_existing = flatten([
-    for schema in local.schemas : [
-      for object_type in local.object_types_singular : {
-        schema      = schema
-        object_type = object_type
-      }
-    ]
-  ])
-}
 
 # FUTURE GRANTS ON OBJECTS
 resource "snowflake_grant_privileges_to_account_role" "ALL_FUTURE_OBJECTS_TO_SCHEMAS_RW_AR" {
@@ -143,6 +144,27 @@ resource "snowflake_grant_privileges_to_account_role" "ALL_EXISTING_OBJECTS_TO_S
 }
 
 #---------------------------------------------------------------------READ ONLY 
+# Define the privileges for each object type for RO roles
+locals {
+  ro_privileges = {
+    "EXTERNAL TABLES"       = ["SELECT", "REFERENCES"]
+    "TABLES"                = ["SELECT", "REFERENCES"]
+    "VIEWS"                 = ["SELECT", "REFERENCES"]
+    "MATERIALIZED VIEWS"    = ["SELECT", "REFERENCES"]
+    "STAGES"                = ["USAGE", "READ"]
+    "FILE FORMATS"          = ["USAGE"]
+    "SEQUENCES"             = ["USAGE"]
+    "FUNCTIONS"             = ["USAGE"]
+    "PROCEDURES"            = ["USAGE"]
+    "TASKS"                 = ["MONITOR"]
+    "STREAMS"               = ["SELECT"]
+    "DYNAMIC TABLES"        = ["SELECT"]
+    "EVENT TABLES"          = ["SELECT"]
+    "ALERTS"                = ["MONITOR"]
+    "PIPES"                 = ["MONITOR"]
+  }
+}
+
 # Grant USAGE privilege on the DATABASE 
 resource "snowflake_grant_privileges_to_account_role" "USAGE_DATABASE_TO_SCHEMA_ROLES_RO" {
   for_each = toset(local.schemas)
@@ -177,27 +199,6 @@ resource "snowflake_grant_privileges_to_account_role" "FUTURE_USAGE_SCHEMA_TO_SC
 
   on_schema {
     future_schemas_in_database = var.curated_db  # Grant USAGE on all future schemas in this database
-  }
-}
-
-# Define the privileges for each object type for RO roles
-locals {
-  ro_privileges = {
-    "EXTERNAL TABLES"       = ["SELECT", "REFERENCES"]
-    "TABLES"                = ["SELECT", "REFERENCES"]
-    "VIEWS"                 = ["SELECT", "REFERENCES"]
-    "MATERIALIZED VIEWS"    = ["SELECT", "REFERENCES"]
-    "STAGES"                = ["USAGE", "READ"]
-    "FILE FORMATS"          = ["USAGE"]
-    "SEQUENCES"             = ["USAGE"]
-    "FUNCTIONS"             = ["USAGE"]
-    "PROCEDURES"            = ["USAGE"]
-    "TASKS"                 = ["MONITOR"]
-    "STREAMS"               = ["SELECT"]
-    "DYNAMIC TABLES"        = ["SELECT"]
-    "EVENT TABLES"          = ["SELECT"]
-    "ALERTS"                = ["MONITOR"]
-    "PIPES"                 = ["MONITOR"]
   }
 }
 

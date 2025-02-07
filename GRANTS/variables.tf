@@ -17,7 +17,7 @@ variable "data_science_db" {
 variable "presentation_db" {
   type = string
 }
-#--------------- Schema name Variables
+#--------------- Curated Schema name Variables
 variable "PEARL_PRODUCT__PATIENT" {
   type = string
 }
@@ -67,5 +67,14 @@ variable "FINANCIAL_PERFORMANCE__PATIENT" {
 }
 
 variable "FINANCIAL_PERFORMANCE__AGG" {
+  type = string
+}
+
+#--------------- RAW Schema name Variables
+variable "NONPHI_ANALYTICS" {
+  type = string
+}
+
+variable "PAYMENT_MODELING" {
   type = string
 }

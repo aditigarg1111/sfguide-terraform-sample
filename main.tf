@@ -8,10 +8,6 @@ terraform {
 }
 
 provider "snowflake" {
-  #organization_name = "FPZVNJL"
-  #account_name      = "IY13699"
-  #authenticator     = "JWT"
-  #user              = "tf-snow"
   role              = "TERRAFORM_DEPLOYMENT_FR"
   warehouse         = "TERRAFORM_WH"
 }

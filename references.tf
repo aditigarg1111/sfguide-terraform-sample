@@ -71,6 +71,9 @@ module "grants"{
     curated_db                     = module.curated_db.database
     data_science_db                = module.data_science_db.database
     presentation_db                = module.presentation_db.database
+    #schema names for raw_db
+    NONPHI_ANALYTICS               = module.raw_schemas.NONPHI_ANALYTICS
+    PAYMENT_MODELING               = module.raw_schemas.PAYMENT_MODELING
     #schema names for curated_db
     PEARL_PRODUCT__PATIENT         = module.curated_schemas.PEARL_PRODUCT__PATIENT
     PEARL_PRODUCT__AGG             = module.curated_schemas.PEARL_PRODUCT__AGG
